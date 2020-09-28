@@ -11,12 +11,17 @@ def get_students():
     return r.json()
 
 def get_image(student):
+    filename = 'images/' + str(student['image_id']) + '.jpg'
     if student['image_id']:
-        r = requests.get(student['image'], stream=True)
-        if r.ok:
-            with open('images/' + str(student['image_id']) + '.jpg', 'wb') as f:
-                for chunk in r:
-                    f.write(chunk)
+        if not os.path.exists(filename):
+            print('Downloading image ' + str(student['image_id']))
+            r = requests.get(student['image'], stream=True)
+            if r.ok:
+                with open(filename, 'wb') as f:
+                    for chunk in r:
+                        f.write(chunk)
+        else:
+            print('Skipping ' + str(student['image_id']))
 
 students = get_students()
 print(students)
